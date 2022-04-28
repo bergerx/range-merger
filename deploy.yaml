@@ -40,12 +40,22 @@ spec:
         app.kubernetes.io/name: range-merger
         app.kubernetes.io/instance: example-deployment
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: range-merger
+                    app.kubernetes.io/instance: example-deployment
       containers:
         - name: range-merger
           image: "range-merger:0.0.1"
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 1002  # nonroot user id in distroless container
+            runAsGroup: 1002
             allowPrivilegeEscalation: false
             capabilities:
               drop: [all]

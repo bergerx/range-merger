@@ -18,6 +18,17 @@ Example for payloads and returns (keep in mind, that there is no guarantee order
 [{"start": 3, "end": 7}, { "start": 9, "end": 15 }, { "start": 17, "end": 22 }]
 ```
 
+## Some highlights
+
+* The container image based on distroless, and its size is minimal (~25mb).
+* App runs as nonroot in the conatiner.
+* Example kubernetes deployment manifest comes with:
+  * Runs as nonroot and `capabilities` are limited to `NET_BIND_SERVICE`.
+  * liveness and readiness probes to help .
+  * 3 instances deployed with `rollingUpdate` strategy with max surge 1.
+  * `podAntiAffinity` rules to get the instances distributed to nodes whenever possible (using soft affinity),
+    this can be improved by using `topologySpreadConstraints` in environment with multiple failure domains.
+  * a `PodDisruptionBudget` that would help keeping HA during planned node operations.
 ## Build and run using local go
 
 ```shell
